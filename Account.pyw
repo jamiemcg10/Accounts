@@ -7,15 +7,19 @@ import pickle
 import tkinter
 import BankAccount
 
+main_window = tkinter.Tk()
+main_window.configure(background='light green')
+main_window.minsize(width=500, height=500)
+
 
 def main():
     def existing_balance():
-        def submit():
+        def submit(): # set existing balance for any separate accounts
             account_purposes[purpose_box.get()] = BankAccount.BankAccount(float(amount_box.get()))
             save()
             existing_bal_window.destroy()
-            main_window.destroy()
-
+            top.destroy()
+            bottom.destroy()
 
         existing_bal_window = tkinter.Toplevel()
         top_frame = tkinter.Frame(existing_bal_window)
@@ -43,7 +47,6 @@ def main():
         existing_bal_window.mainloop()
 
     if account_purposes == {}:  # initial program run or no data has been entered
-        main_window = tkinter.Tk()
 
         top = tkinter.Frame(main_window)
         bottom = tkinter.Frame(main_window)
@@ -62,19 +65,26 @@ def main():
 
         main_window.mainloop()
 
-    menu = tkinter.Tk()
-
     l1 = tkinter.Frame()
     l2 = tkinter.Frame()
+    l2.configure(background='light green', pady=3)
     l3 = tkinter.Frame()
+    l3.configure(background='light green', pady=3)
     l4 = tkinter.Frame()
+    l4.configure(background='light green', pady=3)
     l5 = tkinter.Frame()
+    l5.configure(background='light green', pady=3)
 
     choice = tkinter.Label(l1, text='Welcome! What would you like to do?')
+    choice.configure(background='light green', padx=10, pady=10)
     add_button = tkinter.Button(l2, text='Add money', command=add_prompt)
+    add_button.configure(width=12)
     remove_button = tkinter.Button(l3, text='Remove money', command=remove_prompt)
+    remove_button.configure(width=12)
     show_button = tkinter.Button(l4, text='Show balances', command=show)
-    exit_button = tkinter.Button(l5, text='Exit', command=menu.destroy)
+    show_button.configure(width=12)
+    exit_button = tkinter.Button(l5, text='Exit', command=main_window.destroy)
+    exit_button.configure(width=12)
 
     choice.pack()
     add_button.pack()
@@ -88,12 +98,12 @@ def main():
     l4.pack()
     l5.pack()
 
-    menu.mainloop()
+    main_window.mainloop()
 
 
 def add_prompt():
     def add():
-        if account_box.get().lower() not in account_purposes.keys(): # create account if it doesn't exist
+        if account_box.get().lower() not in account_purposes.keys():  # create account if it doesn't exist
             account_purposes[account_box.get().lower()] = BankAccount.BankAccount(0.)
 
         account_purposes[account_box.get().lower()].add_money(float(amount_box.get()))
@@ -197,25 +207,22 @@ def show():
     show_window.mainloop()
 
 
-
-
-
-def save():
+def save():  # save transactions
     with open("account.dat", "wb") as file:
         pickle.dump(account_purposes, file)
 
 
-## PROGRAM START
+# PROGRAM START
 try:
     with open("account.dat", "rb") as file:
         account_purposes = pickle.load(file)
 except FileNotFoundError:
-        account_purposes = {}
+        account_purposes = {}  # create empty dictionary if the file does not exist
 
 try:
     main()
 except KeyboardInterrupt:
-    print("Your transactions have not been saved.")
+    pass
 
 
 
